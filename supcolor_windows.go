@@ -1,16 +1,12 @@
 package supcolor
 
 import (
-	"golang.org/x/sys/windows"
-	"gopkg.ilharper.com/x/isatty"
 	"os"
 	"strconv"
 	"strings"
-)
 
-var (
-	Stdout int8
-	Stderr int8
+	"golang.org/x/sys/windows"
+	"gopkg.ilharper.com/x/isatty"
 )
 
 func SupColor(stream *os.File) int8 {
@@ -47,16 +43,7 @@ func SupColor(stream *os.File) int8 {
 		return 0
 	}
 
-	if !isatty.Isatty(stream.Fd()) {
-		// Isn't a TTY
-		return 0
-	}
-
 	for _, e := range env {
-		if e == "TERM=dumb" {
-			return 0
-		}
-
 		if strings.HasPrefix(e, "CI=") {
 			if strings.HasPrefix(e, "TRAVIS=") ||
 				strings.HasPrefix(e, "CIRCLECI=") ||
@@ -80,6 +67,17 @@ func SupColor(stream *os.File) int8 {
 		if strings.HasPrefix(e, "TF_BUILD=") &&
 			strings.HasPrefix(e, "AGENT_NAME=") {
 			return 1
+		}
+	}
+
+	if !isatty.Isatty(stream.Fd()) {
+		// Isn't a TTY
+		return 0
+	}
+
+	for _, e := range env {
+		if e == "TERM=dumb" {
+			return 0
 		}
 
 		if strings.HasPrefix(e, "COLORTERM=") {
@@ -121,9 +119,4 @@ func SupColor(stream *os.File) int8 {
 	}
 
 	return 1
-}
-
-func init() {
-	Stdout = SupColor(os.Stdout)
-	Stderr = SupColor(os.Stderr)
 }

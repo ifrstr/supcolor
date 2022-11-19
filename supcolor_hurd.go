@@ -1,15 +1,11 @@
 package supcolor
 
 import (
-	"gopkg.ilharper.com/x/isatty"
 	"os"
 	"strconv"
 	"strings"
-)
 
-var (
-	Stdout int8
-	Stderr int8
+	"gopkg.ilharper.com/x/isatty"
 )
 
 func SupColor(stream *os.File) int8 {
@@ -85,9 +81,4 @@ func SupColor(stream *os.File) int8 {
 	}
 
 	return 0
-}
-
-func init() {
-	Stdout = SupColor(os.Stdout)
-	Stderr = SupColor(os.Stderr)
 }
